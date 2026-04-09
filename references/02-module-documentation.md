@@ -84,6 +84,8 @@ For each endpoint, document:
 
 ## 4. DTOs / Request-Response Types
 
+> If the codebase has no formal DTO layer (common in Go, Ruby on Rails, Express.js), document the **implicit request/response shapes** as inferred from controller parameter parsing, validation schemas, or serializers. Label this section "Request/Response Shapes" and note that no explicit DTO classes exist.
+
 ### Create DTO
 | # | Field | Type | Required | Validation | Notes |
 |---|-------|------|----------|------------|-------|
@@ -172,33 +174,37 @@ If the module has status transitions or multi-step workflows:
 
 ## Business Rule Extraction Guide
 
-This is the most important part for SBVR. When reading service logic, look for:
+This is the most important part for SBVR. When reading service logic, look for every conditional, validation, computation, and side effect. For the formal mapping between code patterns and SBVR rule types, see `references/sbvr-notation-guide.md` (Rule Type Decision Framework). During Phase 2, focus on **finding** and **categorizing** rules; formal SBVR classification happens in Phase 4.
 
-### Validation Rules → SBVR Definitional Rules
-- Required fields checks → "It is necessary that each X has exactly one Y"
-- Format validations → "It is necessary that X follows format Y"
-- Uniqueness constraints → "It is impossible that two X have the same Y"
-- Enum/allowed values → "It is necessary that X is one of: A, B, C"
+### What IS a Business Rule
 
-### Authorization Rules → SBVR Behavioral Rules
-- Role checks → "It is permitted that only [role] performs [action]"
-- Ownership checks → "It is prohibited that [role] accesses [resource] not assigned to them"
-- Status-based restrictions → "It is permitted that [action] only if [status] is [value]"
+| Code Pattern | Category | Example |
+|-------------|----------|---------|
+| Required field checks, format validations | validation | Email required, phone format |
+| Uniqueness constraints, enum/allowed values | constraint | Unique email, status must be one of X/Y/Z |
+| Role checks, ownership guards | authorization | Only admin can delete |
+| Status-based restrictions, state transitions | workflow | Can only ship after payment |
+| Calculated fields, aggregations | computation | Order total = sum of line items |
+| Notifications, audit logging, cascading updates | side-effect | Email sent on order creation |
+| Auto-populated fields | default-value | CreatedAt set to now |
 
-### Workflow Rules → SBVR Status Transitions
-- State machine transitions → "It is permitted that X transitions from A to B only if [condition]"
-- Forward-only states → "It is prohibited that X transitions from [final state] to any previous state"
-- Sequencing → "It is obligatory that [step A] occurs before [step B]"
+### What is NOT a Business Rule
 
-### Computation Rules → SBVR Derivation Rules
-- Calculated fields → "X = formula"
-- Aggregations → "total Y = count of Z where [condition]"
-- Derived status → "status of X = [derivation logic]"
+Do NOT capture as business rules:
+- Environment-specific configuration (`if (isDev) { enableDebug() }`)
+- Logging/monitoring logic (Serilog config, Application Insights setup)
+- Framework boilerplate (DI wiring, middleware registration order, route config)
+- Performance optimizations (caching, connection pooling, lazy loading config)
+- Dev/test utilities (seed data, test helpers)
+- Error handling that simply wraps and re-throws
 
-### Side Effect Rules → SBVR Behavioral Rules
-- Notifications → "It is obligatory that [notification] is sent when [event]"
-- Audit logging → "It is obligatory that [action] creates audit trail"
-- Cascading updates → "It is obligatory that when X changes, Y is updated"
+### Common Patterns Requiring Special Attention
+
+**Magic number status codes:** When status is stored as integers with no enum definition (e.g., `OrderStatus = 0` means confirmed, `1` means updated), document the mapping as a state machine and propose named values. These are business rules even though the code treats them as raw integers.
+
+**Temp/draft entity patterns:** Some systems store draft or in-progress records in separate tables (e.g., `OrdersTemp` → `Orders` after payment). Document whether the draft-to-final transition is a business rule. The temp table is usually an implementation detail — model the lifecycle of the main entity, not the temp table as a separate concept.
+
+**Auto-generated entity models:** When entity models are generated from database schema (EF EDMX, Hibernate reverse-engineering), the real business logic lives in services, not models. Focus extraction effort on service methods and controllers rather than generated model files.
 
 ## Review Passes (2-3 Rounds Required)
 

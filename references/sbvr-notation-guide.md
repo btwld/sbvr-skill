@@ -47,7 +47,7 @@ The final SBVR specification follows this structure:
 ## Part 2: Fact Types (Relationships)
 ## Part 3: Business Rules
 ## Part 4: Status Transitions and Workflow Rules
-## Part 5: Integration/Process Workflows
+## Part 5: Integration and Process Workflows
 ## Part 6: Implementation Notes
 ## Part 7: Compliance Checklist
 ## Appendices
@@ -429,7 +429,7 @@ It is prohibited that {entity} status changes directly from "{A}" to "{C}"
 
 ---
 
-## Part 5: Process Workflows
+## Part 5: Integration and Process Workflows
 
 For multi-step business processes that involve coordination across multiple concepts or external systems. Use workflows when a process has **sequential steps with decision points** — not for simple state transitions (use Part 4) or single-action rules (use Part 3).
 
@@ -560,6 +560,43 @@ Complex nested rules become unreadable. Split into separate rules.
 
 - WRONG: "It is obligatory that for each order that contains a line item that references a product that is discontinued, the order is flagged for review by a manager who supervises the department that owns the product"
 - RIGHT: Split into: (1) rule about discontinued products requiring order flags, (2) rule about which manager reviews flagged orders
+
+### 13. Over-Modeling Implementation Artifacts
+
+DTOs, forms, view models, and request/response types are implementation artifacts, not business concepts. Do not create vocabulary entries for them.
+
+- WRONG: Defining "order data transfer object", "order form", "order response" as separate SBVR concepts
+- RIGHT: Define "order" as a single concept. DTOs are how the system represents the order internally — irrelevant to business semantics.
+
+### 14. Numeric Status Codes as Vocabulary
+
+Code often stores status as integers (`status = 0`, `status = 1`). Translate these to meaningful business names.
+
+- WRONG: "It is necessary that order status is 0 when the order is confirmed"
+- RIGHT: Define named status values ("confirmed", "in progress", "cancelled") and write rules using those names: "It is necessary that each new order has order status 'confirmed' after payment is received"
+
+When discovering integer status codes, document the mapping (0=confirmed, 1=updated, etc.) and use the named values in all SBVR rules.
+
+### 15. Conflating Audit Records with Current State
+
+Many systems have both a current-state table and a history/audit table (e.g., `Order` and `OrdersHistory`). Do not model history tables as separate business concepts.
+
+- WRONG: Defining "order history record" as an independent concept with its own fact types and rules
+- RIGHT: Model "order" as the primary concept. If the audit trail is business-significant, add a single fact type: "order has order change record" and a behavioral rule: "It is obligatory that each order modification creates an order change record"
+
+### 16. Synonym Drift
+
+LLMs lose track of canonical terms across long documents, using "customer" in one rule and "client" in another, or "order total" vs "total order amount."
+
+- WRONG: "It is necessary that each **customer** has an email" ... later ... "It is obligatory that each **client** receives a confirmation"
+- RIGHT: Pick one canonical term in the vocabulary ("customer") and use it consistently in every rule. After completing all rules, scan for term variants — every noun in a rule must exactly match a defined vocabulary term.
+
+### 17. Mirroring Code Structure in Rules
+
+LLMs tend to write one SBVR rule per code function/method. But a single business rule may span multiple methods, and a single method may implement multiple rules.
+
+- WRONG: One rule for `validateEmail()`, one for `checkEmailUnique()`, one for `normalizeEmail()` — when the business rule is simply "each customer must have a unique, valid email address"
+- RIGHT: Write rules per business constraint, not per code function. Combine related validations into a single rule when they serve the same business purpose.
 
 ---
 
@@ -729,7 +766,7 @@ After (when you need start dates and salary):
 **B4:** It is prohibited that a manager approves their own expense report
 
 *Permissions:*
-**B5:** It is permitted that a manager supervises employees from different departments
+**B5:** It is permitted that a manager supervises employees from a different department only if the manager has cross-department authorization
 **B6:** It is permitted that an employee changes departments only if they have been in their current department for at least 6 months
 
 ---
@@ -779,6 +816,11 @@ After (when you need start dates and salary):
 - [ ] No technical terminology in rules (database, API, UI)
 - [ ] No undefined collectives
 - [ ] No imprecise temporal language ("soon", "when possible")
+- [ ] No DTOs/forms/view models defined as vocabulary concepts
+- [ ] No numeric status codes in rules (use named values)
+- [ ] No history/audit tables as separate business concepts
+- [ ] No synonym drift (every noun matches a defined vocabulary term)
+- [ ] Rules organized per business constraint, not per code function
 
 ### Scope Validation
 - [ ] Document scope clear (what's IN vs OUT)

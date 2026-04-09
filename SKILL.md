@@ -129,6 +129,8 @@ For small codebases (<3 modules), agents 1-4 can be collapsed into a single pass
 
 ### Optional Phase 5: Post-SBVR Audit Refresh
 
+> **Trigger:** Only run this phase when the user explicitly requests it, or when the SBVR specification is complete and the user wants a final validation pass.
+
 After the SBVR specification is complete, an optional audit refresh can cross-reference SBVR rules against code enforcement. This adds SBVR rule IDs to the Phase 3 audit tables and identifies:
 - SBVR rules defined but not enforced in code
 - Code enforcement with no corresponding SBVR rule
@@ -166,15 +168,17 @@ If a phase or agent fails mid-execution:
 
 ## Output Format
 
-All outputs are markdown files. The SBVR specification follows the 7-part structure defined in `references/sbvr-notation-guide.md`:
+All outputs are markdown files. The SBVR specification follows the document structure defined in `references/sbvr-notation-guide.md`:
 
 1. Document Overview
 2. Part 1: Business Vocabulary
 3. Part 2: Fact Types (Relationships)
 4. Part 3: Business Rules
 5. Part 4: Status Transitions and Workflow Rules
-6. Part 5: Integration/Synchronization Workflows
-7. Part 6: Implementation Notes + Compliance Checklist
+6. Part 5: Integration and Process Workflows
+7. Part 6: Implementation Notes
+8. Part 7: Compliance Checklist
+9. Appendices (as needed)
 
 ## Adapting to Different Codebases
 
@@ -185,7 +189,9 @@ All outputs are markdown files. The SBVR specification follows the 7-part struct
 | Full-stack monolith | Both layers, plus shared types/contracts |
 | Microservices | Service boundaries, inter-service communication, shared events |
 
-For monorepos or multi-service setups, treat each service as a separate module in Phase 2 and unify the SBVR vocabulary across services in Phase 4.
+For monorepos or multi-service setups, treat each service as a separate module in Phase 2 and unify the SBVR vocabulary across services in Phase 4. Shared libraries become their own module docs. Produce a single unified SBVR specification across all services, noting the owning service for each concept in the vocabulary.
+
+For frontend-only codebases (React/Vue/Angular with no backend), invert the Phase 2 template emphasis: Section 7 (Frontend Screens) becomes primary content, Section 5 (Business Rules) focuses on client-side validation and state management rules, and Section 2 (API Endpoints) documents the external APIs the frontend consumes rather than exposes.
 
 For codebases with no clear module boundaries (single-folder apps, monolithic scripts):
 - In Phase 1, create logical modules based on **entity clusters** or **feature areas** rather than directory structure

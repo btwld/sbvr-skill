@@ -79,6 +79,12 @@ Each agent writes its output to `{DOCS_DIR}/sbvr-draft/` as a working file. The 
 2. ...
 ```
 
+**Ambiguity resolution:** For interactive runs, present ambiguities to the user for resolution. For autonomous runs (no user interaction), apply these defaults:
+- **Unknown enum values:** Document what's visible in code; note "additional values may exist in database" as a question
+- **Unclear cardinality:** Default to the most permissive interpretation; flag for review
+- **Business vs implementation logic:** When uncertain, include it as a candidate rule with a note — Agent 4 or Agent 5 can reclassify or remove it later
+- **Concepts from temp/staging tables:** Model the lifecycle of the main entity; do not create separate concepts for implementation-level staging tables
+
 **Checkpoint:** Review the Context Analyst output. Resolve all ambiguities. Confirm concept and rule lists are complete before proceeding.
 
 ---
@@ -322,15 +328,17 @@ Read each rule aloud. Would a business domain expert understand it without techn
 
 ## Writing the Final Specification
 
-After all 5 agents complete and all validation issues are resolved, compile the final `{DOCS_DIR}/sbvr-specification.md` following the 7-part structure defined in `references/sbvr-notation-guide.md`:
+After all 5 agents complete and all validation issues are resolved, compile the final `{DOCS_DIR}/sbvr-specification.md` following the document structure defined in `references/sbvr-notation-guide.md`:
 
 1. Document Overview
 2. Part 1: Business Vocabulary
 3. Part 2: Fact Types (Relationships)
 4. Part 3: Business Rules (Definitional, Derivation, Behavioral)
 5. Part 4: Status Transitions and Workflow Rules
-6. Part 5: Integration/Process Workflows
-7. Part 6: Implementation Notes + Part 7: Compliance Checklist
+6. Part 5: Integration and Process Workflows
+7. Part 6: Implementation Notes
+8. Part 7: Compliance Checklist
+9. Appendices (as needed)
 
 ## Quality Checklist
 
