@@ -28,6 +28,16 @@ The skill runs in **4 phases**, each producing markdown documents in a `{DOCS_DI
 
 Each phase builds on all previous phases. Read the corresponding reference file before executing each phase.
 
+### Starting from a Later Phase
+
+If prior phase outputs already exist in `{DOCS_DIR}/`, you can start from any phase:
+- **Starting Phase 2**: Requires `00-overview.md` with a Module Map
+- **Starting Phase 3**: Requires `00-overview.md` + all module docs
+- **Starting Phase 4**: Requires `00-overview.md` + all module docs + both audit docs
+- **Phase 4 only (minimal)**: If only existing documentation (not from this skill) is available, run Agent 1 (Context Analyst) directly against source code + existing docs, then continue the pipeline
+
+Before skipping phases, verify existing docs have sufficient detail — especially a Module Map (for Phase 2) and Business Rules sections with file:line references (for Phase 4).
+
 ### Phase 1: Architecture Overview
 
 **Read:** `references/01-architecture-overview.md`
@@ -56,7 +66,7 @@ For EACH module identified in Phase 1's Module Map:
 
 #### Multi-Agent Execution (Recommended for 4+ Modules)
 
-Spawn parallel agents — one per module or group of 2-3 related modules. Each agent reads `00-overview.md` and writes its module doc independently. For large codebases (15+ modules), batch agents in groups of 5-8.
+Use the **Agent tool** to spawn parallel agents — one per module or group of 2-3 related modules. Each agent's prompt must include: (1) the path to `00-overview.md`, (2) the module template from `references/02-module-documentation.md`, (3) the assigned module name(s) and directory path(s), (4) the output file path. Agents run concurrently — launch all agents in a single message for maximum parallelism. For large codebases (15+ modules), batch agents in groups of 5-8 to avoid rate limits.
 
 #### Review Passes (2-3 Rounds)
 
@@ -99,7 +109,7 @@ This is the **core deliverable**. It uses ALL prior outputs: architecture overvi
 
 #### Multi-Agent Pipeline (5 Sequential Agents)
 
-SBVR generation follows a 5-agent pipeline. Each agent builds on the previous agent's output. Review each agent's output before proceeding to the next.
+SBVR generation follows a 5-agent pipeline. Each agent builds on the previous agent's output. After each agent completes, review its output for completeness and correctness before spawning the next agent. For automated runs, perform this review programmatically (check for empty sections, undefined terms, missing cardinalities). For interactive runs, present a summary to the user and ask for approval before proceeding.
 
 **Agent 1: Context Analyst** — Reads all module docs + audit findings. Produces ground facts inventory, candidate concepts (nouns), candidate relationships (verbs), candidate rules (typed), and ambiguities for resolution.
 
@@ -124,6 +134,12 @@ After the SBVR specification is complete, an optional audit refresh can cross-re
 - Code enforcement with no corresponding SBVR rule
 - SBVR rules that contradict code behavior
 
+## Model Considerations
+
+- **Opus/Sonnet**: Can run the full pipeline as described. Use Opus for Phase 4 (SBVR Generation) if available — modality decisions and formal notation benefit from stronger reasoning.
+- **Haiku**: Suitable for Phase 1 and Phase 2 (documentation). For Phase 4, collapse agents 1-4 into a single pass regardless of codebase size, and still run Agent 5 (Validation) separately.
+- **Subagents**: When spawning parallel agents for Phase 2, the subagents can use a faster/cheaper model since module documentation is more straightforward than SBVR formalization.
+
 ## Key Principles
 
 **Traceability**: Every SBVR rule should trace back to source code (file:line). Every code pattern should trace forward to an SBVR concept.
@@ -139,6 +155,14 @@ After the SBVR specification is complete, an optional audit refresh can cross-re
 **Uniqueness constraints are mandatory**: Every fact type must specify cardinality in both directions. This is the most commonly skipped step and the most damaging when missing.
 
 **Modal precision**: Definitional rules use "necessary" or "impossible". Behavioral rules use "obligatory", "prohibited", or "permitted". Never mix them.
+
+## Error Recovery
+
+If a phase or agent fails mid-execution:
+- **Truncated output**: Re-run the agent with a narrower scope (fewer modules, or split the module into sub-sections). Check that the output file was written — partial files are better than no files.
+- **Context limit hit**: For Phase 2, reduce modules per agent to 1. For Phase 4, ensure intermediate drafts are written to files (not kept in context) so subsequent agents can read them fresh.
+- **Inconsistent outputs**: Run an additional review pass targeting the specific inconsistency. Don't restart from scratch — build on what exists.
+- **User wants to stop mid-pipeline**: All phase outputs are standalone markdown files. The user can resume later by starting from the next phase.
 
 ## Output Format
 
@@ -162,3 +186,10 @@ All outputs are markdown files. The SBVR specification follows the 7-part struct
 | Microservices | Service boundaries, inter-service communication, shared events |
 
 For monorepos or multi-service setups, treat each service as a separate module in Phase 2 and unify the SBVR vocabulary across services in Phase 4.
+
+For codebases with no clear module boundaries (single-folder apps, monolithic scripts):
+- In Phase 1, create logical modules based on **entity clusters** or **feature areas** rather than directory structure
+- Group endpoints by the primary entity they operate on (e.g., all `/users/*` routes = Users module)
+- If the codebase has fewer than 3 logical modules, skip multi-agent execution in Phase 2 and the 5-agent pipeline in Phase 4 (collapse to single-pass)
+
+For codebases with no tests: Phase 2 test case sections become **proposed test cases** rather than documented ones. Note this gap in Phase 3 audit.

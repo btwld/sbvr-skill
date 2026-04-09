@@ -263,6 +263,17 @@ SBVR models all attributes as **binary fact types** using the "has" pattern. Use
 | user has first name | each user has exactly one first name |
 | song has release date | each song has at most one release date |
 
+### Unary Fact Types
+
+For boolean properties where the concept either has or lacks a characteristic:
+
+```markdown
+**Fact Type: customer is active**
+- Necessity: each customer is active or is not active
+```
+
+Common examples: `user is verified`, `order is cancelled`, `account is locked`. These replace boolean fields in entity models. Do NOT model as binary fact types with a boolean value — use the unary pattern.
+
 ### Grouping
 
 Group fact types by domain area:
@@ -420,21 +431,40 @@ It is prohibited that {entity} status changes directly from "{A}" to "{C}"
 
 ## Part 5: Process Workflows
 
-For multi-step business processes:
+For multi-step business processes that involve coordination across multiple concepts or external systems. Use workflows when a process has **sequential steps with decision points** — not for simple state transitions (use Part 4) or single-action rules (use Part 3).
+
+**When to use a workflow:**
+- Process spans 3+ steps with branching logic
+- Multiple systems or actors are involved
+- There are retry/failure paths
+- The ordering of steps matters
+
+**When NOT to use a workflow:**
+- Simple A→B state transition → use Status Transition rules (Part 4)
+- Single conditional action → use Behavioral rules (Part 3)
 
 ```markdown
 ### {Process Name}
 
-When {trigger event}, the following workflow executes:
+**Trigger:** {event that initiates the process}
+**Actors:** {concepts involved}
+**Outcome:** {what successful completion produces}
 
 ### Step 1: {Step Name}
 {Description of what happens}
+**Decision:** {condition} → Step 2a / Step 2b
 
-### Step 2: {Step Name}
+### Step 2a: {Step Name}
 {Description}
+
+### Step 2b: {Alternative Path}
+{Description}
+
+### Error Handling
+{What happens on failure at each step}
 ```
 
-Include data flow, decision points, and error handling.
+Include data flow between steps and reference the SBVR rules (B/ST numbers) that govern each step.
 
 ---
 
@@ -507,6 +537,29 @@ Use specific durations, not vague time expressions.
 
 - WRONG: "It is obligatory that notifications are sent soon"
 - RIGHT: "It is obligatory that notification is sent within 24 hours"
+
+### 10. Inconsistent Singular/Plural
+
+SBVR uses singular form consistently. LLMs often drift between forms within the same spec.
+
+- WRONG: "It is necessary that each customer has exactly one email" then later "customers must have addresses"
+- RIGHT: Always "each customer", "each order", "each employee" — singular throughout
+
+### 11. Trivial Permissions
+
+A permission without "only if" is vacuous — it says nothing constraining.
+
+- WRONG: "It is permitted that a user creates an account" (everyone can always — why state it?)
+- RIGHT: "It is permitted that a user creates an account only if the user has a valid email address"
+
+Only write permission rules when there IS a meaningful condition.
+
+### 12. Over-Nested Quantification
+
+Complex nested rules become unreadable. Split into separate rules.
+
+- WRONG: "It is obligatory that for each order that contains a line item that references a product that is discontinued, the order is flagged for review by a manager who supervises the department that owns the product"
+- RIGHT: Split into: (1) rule about discontinued products requiring order flags, (2) rule about which manager reviews flagged orders
 
 ---
 

@@ -2,7 +2,7 @@
 
 ## Objective
 
-For each module in the Module Map from Phase 1, produce a comprehensive document covering endpoints, entities, DTOs, business rules, frontend screens, and issues. These documents feed directly into SBVR generation in Phase 3.
+For each module in the Module Map from Phase 1, produce a comprehensive document covering endpoints, entities, DTOs, business rules, frontend screens, and issues. These documents feed directly into Phase 3 (Audit) and Phase 4 (SBVR Generation).
 
 ## Process
 
@@ -117,7 +117,7 @@ For each rule, document:
 - What happens on violation (error code, message, side effect)
 - A concrete test scenario: "When X, expect Y"
 
-This section is the primary input for SBVR Phase 3. Be exhaustive — every conditional, validation, computation, and side effect in service logic is a candidate business rule.
+This section is the primary input for SBVR generation (Phase 4). Be exhaustive — every conditional, validation, computation, and side effect in service logic is a candidate business rule.
 
 ## 6. State Machines / Workflows
 

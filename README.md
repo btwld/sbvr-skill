@@ -13,9 +13,21 @@ Analyzes any codebase — APIs, web apps, full-stack projects — and produces a
 | 3. Security & Technical Audit | `00-security-audit.md`, `00-technical-audit.md` | Vulnerabilities, technical debt, implicit rule discovery |
 | 4. SBVR Generation | `sbvr-specification.md` | Formal SBVR 1.5 vocabulary, fact types, and business rules |
 
+## Installation
+
+```bash
+claude skill add sbvr-architect
+```
+
+Or install directly from the repository:
+
+```bash
+claude skill add /path/to/sbvr-skill
+```
+
 ## Usage
 
-This is a Claude Code skill. Invoke it when you want to analyze a codebase for business rules and architecture documentation.
+Once installed, invoke the skill in Claude Code when you want to analyze a codebase for business rules and architecture documentation.
 
 **Trigger phrases:**
 - "analyze this codebase"

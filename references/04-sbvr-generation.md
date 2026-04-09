@@ -24,6 +24,18 @@ SBVR generation follows a 5-agent pipeline. Each agent builds on the previous ag
 - **Large codebases (4+ modules):** Run the full 5-agent pipeline as described below.
 - **Small codebases (<3 modules):** Agents 1-4 can be collapsed into a single pass by one agent. Agent 5 (Validation) should always run separately for independent verification.
 
+### Intermediate Output Storage
+
+Each agent writes its output to `{DOCS_DIR}/sbvr-draft/` as a working file. The next agent reads the previous agent's file as input. After Agent 5 completes, the final specification is compiled to `{DOCS_DIR}/sbvr-specification.md` and the draft directory can be deleted.
+
+| Agent | Output File |
+|-------|------------|
+| Agent 1 | `sbvr-draft/01-context-analysis.md` |
+| Agent 2 | `sbvr-draft/02-vocabulary.md` |
+| Agent 3 | `sbvr-draft/03-fact-types.md` |
+| Agent 4 | `sbvr-draft/04-rules.md` |
+| Agent 5 | `sbvr-draft/05-validation-report.md` |
+
 ---
 
 ### Agent 1: Context Analyst
