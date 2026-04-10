@@ -133,6 +133,9 @@ If the module has status transitions or multi-step workflows:
 1. Step description → next step
 2. ...
 
+### Lifecycle Narrative
+(2-3 sentences describing the entity's journey from creation to end state in plain English. E.g., "An Order is created when a customer checks out. It moves through payment processing, then to fulfillment. It ends either as delivered or cancelled/refunded.")
+
 ## 7. Frontend / Admin Screens (if applicable)
 
 ### {Screen Name} ({route})
@@ -187,6 +190,7 @@ This is the most important part for SBVR. When reading service logic, look for e
 | Calculated fields, aggregations | computation | Order total = sum of line items |
 | Notifications, audit logging, cascading updates | side-effect | Email sent on order creation |
 | Auto-populated fields | default-value | CreatedAt set to now |
+| Rules depending on external system responses | integration | Credit check must pass before approval |
 
 ### What is NOT a Business Rule
 
@@ -245,4 +249,9 @@ Review passes can use **parallel agents** — one per module or group of modules
    - Are cross-module business rules captured in both relevant modules?
    - Do dependency relationships match between modules?
    - Are there conflicting descriptions of the same entity or endpoint?
-3. Append `## Review Pass 3 Notes` summarizing cross-module findings
+3. **Terminology Inconsistencies:** Flag cases where different modules use different names for the same concept (e.g., `User` vs `Account` vs `Member`). For each inconsistency, record it in the affected module docs under Section 1 (Overview). These become synonym candidates for SBVR vocabulary in Phase 4.
+
+   | This Module Uses | Other Module(s) Use | Likely Same Concept | Notes |
+   |-----------------|---------------------|---------------------|-------|
+
+4. Append `## Review Pass 3 Notes` summarizing cross-module findings and terminology inconsistencies

@@ -136,6 +136,40 @@ After the SBVR specification is complete, an optional audit refresh can cross-re
 - Code enforcement with no corresponding SBVR rule
 - SBVR rules that contradict code behavior
 
+### Optional Phase 6: Stakeholder Validation Questionnaire
+
+> **Trigger:** Run after Phase 4 (or Phase 5) when the user wants to validate findings with business stakeholders.
+
+Generate a structured questionnaire from the SBVR specification and audit findings, designed to surface gaps between code behavior and actual business intent.
+
+**Output:** `{DOCS_DIR}/00-validation-questionnaire.md`
+
+**Structure — group questions by audience:**
+
+1. **Product / Business Stakeholders**
+   - Confirm or correct inferred business terminology
+   - Validate business rule interpretations (especially rules with weak code evidence)
+   - Identify outdated or legacy logic that no longer reflects current policy
+   - Clarify workflow exceptions and edge cases
+
+2. **Developer / Architect**
+   - Confirm integration intent and external system dependencies
+   - Validate state machine completeness (missing transitions?)
+   - Identify undocumented business rules not visible in code
+   - Resolve terminology inconsistencies found across modules
+
+3. **QA**
+   - Validate test scenarios derived from business rules
+   - Identify untested edge cases and boundary conditions
+   - Confirm expected behavior for error/exception paths
+
+4. **Operations / Support**
+   - Confirm operational workflows match documented state machines
+   - Identify manual processes that complement automated workflows
+   - Validate escalation paths and exception handling
+
+For each question, reference the specific SBVR rule ID, module documentation section, or audit finding that prompted it. Prioritize questions about inferred rules, terminology inconsistencies, and suspected legacy logic.
+
 ## Model Considerations
 
 - **Opus/Sonnet**: Can run the full pipeline as described. Use Opus for Phase 4 (SBVR Generation) if available — modality decisions and formal notation benefit from stronger reasoning.

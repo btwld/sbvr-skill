@@ -169,6 +169,30 @@ Write the document with this structure:
 
 (Document ALL external systems: third-party APIs, pre-compiled binaries from other repos, external auth providers, cloud services. These are critical to understanding the system boundary.)
 
+## Major Business Flows
+
+Document 3-5 of the most important end-to-end business operations. Each flow traces a user action from API entry through all services, integrations, and database operations to completion.
+
+For each flow:
+1. Name the business operation (e.g., "User places an order", "Loan application is submitted")
+2. Trace the path: controller → service(s) → external calls → database writes → side effects
+3. Note branching points (success vs failure, conditional paths)
+4. Reference file paths at each step
+
+These flows synthesize cross-module behavior that individual module docs cannot capture alone. They are critical input for Phase 4's Integration and Process Workflows (SBVR Part 5, see `references/04-sbvr-generation.md` and `references/sbvr-notation-guide.md`).
+
+Example format:
+```
+### Flow: {Business Operation Name}
+1. User calls `POST /api/orders` → `OrderController.create()` (src/orders/controller.ts:45)
+2. Controller calls `OrderService.createOrder()` (src/orders/service.ts:78)
+3. Service validates inventory via `InventoryService.checkStock()` (src/inventory/service.ts:22)
+4. If stock available: creates Order record (status: PENDING)
+5. Calls PaymentGateway API to initiate charge (src/integrations/payment.ts:33)
+6. On payment success: updates Order status to CONFIRMED, sends confirmation email
+7. On payment failure: updates Order status to FAILED, restores inventory hold
+```
+
 ## Cross-Cutting Concerns
 
 ### Logging & Auditing
