@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dependency Audit"
+  short_description: "Audit and update project dependencies"
+  default_prompt: "Use $deps to audit outdated, vulnerable, or risky project dependencies."

@@ -1,0 +1,710 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/VisualReport",
+  "definitions": {
+    "VisualReport": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "string",
+          "const": "v1"
+        },
+        "run": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "string"
+            },
+            "resultsDir": {
+              "type": "string"
+            },
+            "overallStatus": {
+              "$ref": "#/definitions/StepStatus"
+            },
+            "generatedAt": {
+              "type": "string"
+            },
+            "summaryPath": {
+              "type": "string"
+            },
+            "findingsPath": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "target",
+            "resultsDir",
+            "overallStatus",
+            "generatedAt",
+            "summaryPath",
+            "findingsPath"
+          ],
+          "additionalProperties": false
+        },
+        "facets": {
+          "type": "object",
+          "properties": {
+            "sources": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BreakdownPoint"
+              }
+            },
+            "categories": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BreakdownPoint"
+              }
+            },
+            "severities": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BreakdownPoint"
+              }
+            },
+            "ruleFamilies": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BreakdownPoint"
+              }
+            },
+            "stepStatuses": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BreakdownPoint"
+              }
+            }
+          },
+          "required": [
+            "sources",
+            "categories",
+            "severities",
+            "ruleFamilies",
+            "stepStatuses"
+          ],
+          "additionalProperties": false
+        },
+        "overview": {
+          "type": "object",
+          "properties": {
+            "cards": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MetricCard"
+              }
+            },
+            "stepStatus": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BreakdownPoint"
+              }
+            },
+            "findingMix": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BreakdownPoint"
+              }
+            }
+          },
+          "required": [
+            "cards",
+            "stepStatus",
+            "findingMix"
+          ],
+          "additionalProperties": false
+        },
+        "executive": {
+          "type": "object",
+          "properties": {
+            "cards": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MetricCard"
+              }
+            },
+            "topRisks": {
+              "$ref": "#/definitions/TableBlock"
+            },
+            "security": {
+              "type": "object",
+              "properties": {
+                "severityBreakdown": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/BreakdownPoint"
+                  }
+                },
+                "directPackages": {
+                  "$ref": "#/definitions/TableBlock"
+                },
+                "transitivePackages": {
+                  "$ref": "#/definitions/TableBlock"
+                }
+              },
+              "required": [
+                "severityBreakdown",
+                "directPackages",
+                "transitivePackages"
+              ],
+              "additionalProperties": false
+            },
+            "quality": {
+              "type": "object",
+              "properties": {
+                "cards": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/MetricCard"
+                  }
+                },
+                "notes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "cards",
+                "notes"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "cards",
+            "topRisks",
+            "security",
+            "quality"
+          ],
+          "additionalProperties": false
+        },
+        "engineering": {
+          "type": "object",
+          "properties": {
+            "hotspots": {
+              "$ref": "#/definitions/TableBlock"
+            },
+            "complexity": {
+              "type": "object",
+              "properties": {
+                "cards": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/MetricCard"
+                  }
+                },
+                "thresholds": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/BreakdownPoint"
+                  }
+                },
+                "hotspots": {
+                  "$ref": "#/definitions/TableBlock"
+                }
+              },
+              "required": [
+                "cards",
+                "thresholds",
+                "hotspots"
+              ],
+              "additionalProperties": false
+            },
+            "duplication": {
+              "type": "object",
+              "properties": {
+                "cards": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/MetricCard"
+                  }
+                },
+                "files": {
+                  "$ref": "#/definitions/TableBlock"
+                },
+                "pairs": {
+                  "$ref": "#/definitions/TableBlock"
+                }
+              },
+              "required": [
+                "cards",
+                "files",
+                "pairs"
+              ],
+              "additionalProperties": false
+            },
+            "changeRisk": {
+              "type": "object",
+              "properties": {
+                "revisions": {
+                  "$ref": "#/definitions/TableBlock"
+                },
+                "ownership": {
+                  "$ref": "#/definitions/TableBlock"
+                },
+                "oldest": {
+                  "$ref": "#/definitions/TableBlock"
+                }
+              },
+              "required": [
+                "revisions",
+                "ownership",
+                "oldest"
+              ],
+              "additionalProperties": false
+            },
+            "maintainability": {
+              "type": "object",
+              "properties": {
+                "rules": {
+                  "$ref": "#/definitions/TableBlock"
+                },
+                "files": {
+                  "$ref": "#/definitions/TableBlock"
+                }
+              },
+              "required": [
+                "rules",
+                "files"
+              ],
+              "additionalProperties": false
+            },
+            "deadCode": {
+              "type": "object",
+              "properties": {
+                "counts": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/BreakdownPoint"
+                  }
+                },
+                "dependencies": {
+                  "$ref": "#/definitions/TableBlock"
+                },
+                "devDependencies": {
+                  "$ref": "#/definitions/TableBlock"
+                },
+                "unlistedPackages": {
+                  "$ref": "#/definitions/TableBlock"
+                },
+                "unresolvedImports": {
+                  "$ref": "#/definitions/TableBlock"
+                }
+              },
+              "required": [
+                "counts",
+                "dependencies",
+                "devDependencies",
+                "unlistedPackages",
+                "unresolvedImports"
+              ],
+              "additionalProperties": false
+            },
+            "policy": {
+              "type": "object",
+              "properties": {
+                "families": {
+                  "$ref": "#/definitions/TableBlock"
+                },
+                "files": {
+                  "$ref": "#/definitions/TableBlock"
+                }
+              },
+              "required": [
+                "families",
+                "files"
+              ],
+              "additionalProperties": false
+            },
+            "secrets": {
+              "type": "object",
+              "properties": {
+                "rules": {
+                  "$ref": "#/definitions/TableBlock"
+                },
+                "files": {
+                  "$ref": "#/definitions/TableBlock"
+                },
+                "noisyRules": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "rules",
+                "files",
+                "noisyRules"
+              ],
+              "additionalProperties": false
+            },
+            "architecture": {
+              "type": "object",
+              "properties": {
+                "cards": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/MetricCard"
+                  }
+                },
+                "coverageAssessment": {
+                  "$ref": "#/definitions/SummaryCoverageAssessment"
+                }
+              },
+              "required": [
+                "cards",
+                "coverageAssessment"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "hotspots",
+            "complexity",
+            "duplication",
+            "changeRisk",
+            "maintainability",
+            "deadCode",
+            "policy",
+            "secrets",
+            "architecture"
+          ],
+          "additionalProperties": false
+        },
+        "links": {
+          "type": "object",
+          "properties": {
+            "artifacts": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VisualReportLink"
+              }
+            }
+          },
+          "required": [
+            "artifacts"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "run",
+        "facets",
+        "overview",
+        "executive",
+        "engineering",
+        "links"
+      ],
+      "additionalProperties": false
+    },
+    "StepStatus": {
+      "type": "string",
+      "enum": [
+        "passed",
+        "findings",
+        "failed",
+        "skipped",
+        "unsupported"
+      ]
+    },
+    "BreakdownPoint": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "type": "number"
+        },
+        "severity": {
+          "$ref": "#/definitions/FindingSeverity"
+        },
+        "drilldown": {
+          "$ref": "#/definitions/DrilldownRef"
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "FindingSeverity": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "warning",
+        "info"
+      ]
+    },
+    "DrilldownRef": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "findings",
+            "file",
+            "artifact"
+          ]
+        },
+        "filters": {
+          "$ref": "#/definitions/DrilldownFilters"
+        },
+        "file": {
+          "type": "string"
+        },
+        "artifact": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "DrilldownFilters": {
+      "type": "object",
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FindingSource"
+          }
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FindingCategory"
+          }
+        },
+        "severities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FindingSeverity"
+          }
+        },
+        "ruleIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ruleFamilies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "packages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "buckets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "FindingSource": {
+      "type": "string",
+      "enum": [
+        "gitleaks",
+        "trivy",
+        "knip",
+        "eslint",
+        "opengrep"
+      ]
+    },
+    "FindingCategory": {
+      "type": "string",
+      "enum": [
+        "secret",
+        "dependency-vulnerability",
+        "unused-code",
+        "maintainability",
+        "policy"
+      ]
+    },
+    "MetricCard": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "type": [
+            "number",
+            "string"
+          ]
+        },
+        "unit": {
+          "type": "string"
+        },
+        "tone": {
+          "type": "string",
+          "enum": [
+            "neutral",
+            "info",
+            "warning",
+            "critical",
+            "positive"
+          ]
+        },
+        "subtitle": {
+          "type": "string"
+        },
+        "drilldown": {
+          "$ref": "#/definitions/DrilldownRef"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "value",
+        "tone"
+      ],
+      "additionalProperties": false
+    },
+    "TableBlock": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TableColumn"
+          }
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TableRow"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "columns",
+        "rows"
+      ],
+      "additionalProperties": false
+    },
+    "TableColumn": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "label"
+      ],
+      "additionalProperties": false
+    },
+    "TableRow": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "values": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/TableRowValue"
+          }
+        },
+        "drilldown": {
+          "$ref": "#/definitions/DrilldownRef"
+        }
+      },
+      "required": [
+        "key",
+        "values"
+      ],
+      "additionalProperties": false
+    },
+    "TableRowValue": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "null"
+      ]
+    },
+    "SummaryCoverageAssessment": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "useful",
+            "partial",
+            "weak"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "VisualReportLink": {
+      "type": "object",
+      "properties": {
+        "stepId": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "stepId",
+        "path"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

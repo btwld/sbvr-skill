@@ -1,0 +1,352 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/AgentAnalysis",
+  "definitions": {
+    "AgentAnalysis": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "string",
+          "const": "v1"
+        },
+        "agentId": {
+          "type": "string"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "summary": {
+          "$ref": "#/definitions/AgentReviewSummary"
+        },
+        "reviewScope": {
+          "$ref": "#/definitions/AgentReviewScope"
+        },
+        "metrics": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "flows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AgentFlow"
+          }
+        },
+        "hotspots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AgentHotspot"
+          }
+        },
+        "findingClusters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AgentFindingCluster"
+          }
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AgentRecommendation"
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "agentId",
+        "domain",
+        "summary",
+        "reviewScope",
+        "metrics",
+        "flows",
+        "hotspots",
+        "findingClusters",
+        "recommendations"
+      ],
+      "additionalProperties": false
+    },
+    "AgentReviewSummary": {
+      "type": "object",
+      "properties": {
+        "headline": {
+          "type": "string"
+        },
+        "riskLevel": {
+          "$ref": "#/definitions/ReviewRiskLevel"
+        },
+        "confidence": {
+          "$ref": "#/definitions/ReviewConfidence"
+        },
+        "why": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "headline",
+        "riskLevel",
+        "confidence",
+        "why"
+      ],
+      "additionalProperties": false
+    },
+    "ReviewRiskLevel": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ]
+    },
+    "ReviewConfidence": {
+      "type": "string",
+      "enum": [
+        "high",
+        "medium"
+      ]
+    },
+    "AgentReviewScope": {
+      "type": "object",
+      "properties": {
+        "ownedPaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "supportingPaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "inputFiles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rawArtifacts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "ownedPaths",
+        "supportingPaths",
+        "inputFiles",
+        "rawArtifacts"
+      ],
+      "additionalProperties": false
+    },
+    "AgentFlow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "entryPoints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "stateOwners": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sensitiveData": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "externalBoundaries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "riskNotes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "entryPoints",
+        "services",
+        "stateOwners",
+        "sensitiveData",
+        "externalBoundaries",
+        "riskNotes"
+      ],
+      "additionalProperties": false
+    },
+    "AgentHotspot": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "score": {
+          "type": "number"
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sourceMetrics": {
+          "type": "object",
+          "properties": {
+            "complexity": {
+              "type": "number"
+            },
+            "duplication": {
+              "type": "number"
+            },
+            "revisions": {
+              "type": "number"
+            },
+            "findings": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "complexity",
+            "duplication",
+            "revisions",
+            "findings"
+          ],
+          "additionalProperties": false
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "file",
+        "score",
+        "reasons",
+        "sourceMetrics",
+        "evidenceRefs"
+      ],
+      "additionalProperties": false
+    },
+    "AgentFindingCluster": {
+      "type": "object",
+      "properties": {
+        "clusterId": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "category": {
+          "$ref": "#/definitions/ReviewClusterCategory"
+        },
+        "severity": {
+          "$ref": "#/definitions/ReviewRiskLevel"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "recommendation": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "clusterId",
+        "title",
+        "category",
+        "severity",
+        "files",
+        "evidenceRefs",
+        "recommendation"
+      ],
+      "additionalProperties": false
+    },
+    "ReviewClusterCategory": {
+      "type": "string",
+      "enum": [
+        "security",
+        "maintainability",
+        "duplication",
+        "change-risk",
+        "policy",
+        "dead-code",
+        "architecture"
+      ]
+    },
+    "AgentRecommendation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "priority": {
+          "$ref": "#/definitions/RecommendationPriority"
+        },
+        "action": {
+          "type": "string"
+        },
+        "affectedFiles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "priority",
+        "action",
+        "affectedFiles",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "RecommendationPriority": {
+      "type": "string",
+      "enum": [
+        "p0",
+        "p1",
+        "p2"
+      ]
+    }
+  }
+}

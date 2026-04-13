@@ -1,0 +1,149 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/NormalizedFindingList",
+  "definitions": {
+    "NormalizedFindingList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/NormalizedFinding"
+      }
+    },
+    "NormalizedFinding": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "stepId": {
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/definitions/FindingSource"
+        },
+        "category": {
+          "$ref": "#/definitions/FindingCategory"
+        },
+        "severity": {
+          "$ref": "#/definitions/FindingSeverity"
+        },
+        "ruleId": {
+          "type": "string"
+        },
+        "ruleFamily": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "file": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "line": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "fingerprint": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rawRef": {
+          "type": "string"
+        },
+        "subjectType": {
+          "$ref": "#/definitions/FindingSubjectType"
+        },
+        "subjectKey": {
+          "type": "string"
+        },
+        "packageName": {
+          "type": "string"
+        },
+        "packageVersion": {
+          "type": "string"
+        },
+        "dependencyKind": {
+          "$ref": "#/definitions/FindingDependencyKind"
+        },
+        "bucket": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "stepId",
+        "source",
+        "category",
+        "severity",
+        "ruleId",
+        "ruleFamily",
+        "file",
+        "line",
+        "message",
+        "fingerprint",
+        "rawRef",
+        "subjectType",
+        "subjectKey"
+      ],
+      "additionalProperties": false
+    },
+    "FindingSource": {
+      "type": "string",
+      "enum": [
+        "gitleaks",
+        "trivy",
+        "knip",
+        "eslint",
+        "opengrep"
+      ]
+    },
+    "FindingCategory": {
+      "type": "string",
+      "enum": [
+        "secret",
+        "dependency-vulnerability",
+        "unused-code",
+        "maintainability",
+        "policy"
+      ]
+    },
+    "FindingSeverity": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "warning",
+        "info"
+      ]
+    },
+    "FindingSubjectType": {
+      "type": "string",
+      "enum": [
+        "file",
+        "dependency",
+        "repo",
+        "config",
+        "function",
+        "unknown"
+      ]
+    },
+    "FindingDependencyKind": {
+      "type": "string",
+      "enum": [
+        "direct",
+        "transitive"
+      ]
+    }
+  }
+}

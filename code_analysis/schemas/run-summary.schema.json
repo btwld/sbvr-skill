@@ -1,0 +1,868 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/RunSummary",
+  "definitions": {
+    "RunSummary": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "string",
+          "const": "v1"
+        },
+        "run": {
+          "$ref": "#/definitions/SummaryRunInfo"
+        },
+        "size": {
+          "type": "object",
+          "properties": {
+            "filesTotal": {
+              "type": "number"
+            },
+            "linesTotal": {
+              "type": "number"
+            },
+            "codeLines": {
+              "type": "number"
+            },
+            "commentLines": {
+              "type": "number"
+            },
+            "blankLines": {
+              "type": "number"
+            },
+            "languages": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SummaryLanguageMetric"
+              }
+            }
+          },
+          "required": [
+            "filesTotal",
+            "linesTotal",
+            "codeLines",
+            "commentLines",
+            "blankLines",
+            "languages"
+          ],
+          "additionalProperties": false
+        },
+        "complexity": {
+          "type": "object",
+          "properties": {
+            "functionsTotal": {
+              "type": "number"
+            },
+            "thresholds": {
+              "type": "object",
+              "properties": {
+                "ccnGte10": {
+                  "type": "number"
+                },
+                "ccnGte20": {
+                  "type": "number"
+                },
+                "nlocGte150": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "ccnGte10",
+                "ccnGte20",
+                "nlocGte150"
+              ],
+              "additionalProperties": false
+            },
+            "hotspots": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SummaryComplexityHotspot"
+              }
+            }
+          },
+          "required": [
+            "functionsTotal",
+            "thresholds",
+            "hotspots"
+          ],
+          "additionalProperties": false
+        },
+        "duplication": {
+          "type": "object",
+          "properties": {
+            "cloneGroups": {
+              "type": "number"
+            },
+            "duplicatedLines": {
+              "type": "number"
+            },
+            "duplicatedTokens": {
+              "type": "number"
+            },
+            "percentage": {
+              "type": "number"
+            },
+            "topPairs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SummaryDuplicationPair"
+              }
+            },
+            "topFiles": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SummaryDuplicationFile"
+              }
+            }
+          },
+          "required": [
+            "cloneGroups",
+            "duplicatedLines",
+            "duplicatedTokens",
+            "percentage",
+            "topPairs",
+            "topFiles"
+          ],
+          "additionalProperties": false
+        },
+        "changeRisk": {
+          "type": "object",
+          "properties": {
+            "topRevisions": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SummaryRevisionsEntry"
+              }
+            },
+            "ownershipHotspots": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SummaryOwnershipHotspot"
+              }
+            },
+            "oldestFiles": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SummaryAgeEntry"
+              }
+            },
+            "topCouplings": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SummaryCouplingEntry"
+              }
+            },
+            "effortByAuthor": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SummaryEffortEntry"
+              }
+            },
+            "notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "topRevisions",
+            "ownershipHotspots",
+            "oldestFiles",
+            "topCouplings",
+            "effortByAuthor",
+            "notes"
+          ],
+          "additionalProperties": false
+        },
+        "dependencySecurity": {
+          "type": "object",
+          "properties": {
+            "countsBySeverity": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "number"
+              }
+            },
+            "directPackages": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SummaryDependencyPackage"
+              }
+            },
+            "transitivePackages": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SummaryDependencyPackage"
+              }
+            },
+            "sbomArtifact": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "countsBySeverity",
+            "directPackages",
+            "transitivePackages",
+            "sbomArtifact"
+          ],
+          "additionalProperties": false
+        },
+        "architecture": {
+          "type": "object",
+          "properties": {
+            "modulesCruised": {
+              "type": "number"
+            },
+            "dependenciesCruised": {
+              "type": "number"
+            },
+            "cycleCount": {
+              "type": "number"
+            },
+            "unresolvedCount": {
+              "type": "number"
+            },
+            "coverageAssessment": {
+              "$ref": "#/definitions/SummaryCoverageAssessment"
+            }
+          },
+          "required": [
+            "modulesCruised",
+            "dependenciesCruised",
+            "cycleCount",
+            "unresolvedCount",
+            "coverageAssessment"
+          ],
+          "additionalProperties": false
+        },
+        "deadCode": {
+          "type": "object",
+          "properties": {
+            "counts": {
+              "type": "object",
+              "properties": {
+                "unusedFiles": {
+                  "type": "number"
+                },
+                "unusedDependencies": {
+                  "type": "number"
+                },
+                "unusedDevDependencies": {
+                  "type": "number"
+                },
+                "unlistedPackages": {
+                  "type": "number"
+                },
+                "unresolvedImports": {
+                  "type": "number"
+                },
+                "unusedBinaries": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "unusedFiles",
+                "unusedDependencies",
+                "unusedDevDependencies",
+                "unlistedPackages",
+                "unresolvedImports",
+                "unusedBinaries"
+              ],
+              "additionalProperties": false
+            },
+            "unusedDependencies": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "file": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "unusedDevDependencies": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "file": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "unlistedPackages": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "file": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "unresolvedImports": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "file": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "counts",
+            "unusedDependencies",
+            "unusedDevDependencies",
+            "unlistedPackages",
+            "unresolvedImports"
+          ],
+          "additionalProperties": false
+        },
+        "maintainability": {
+          "type": "object",
+          "properties": {
+            "errorCount": {
+              "type": "number"
+            },
+            "warningCount": {
+              "type": "number"
+            },
+            "topRules": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SummaryCountEntry"
+              }
+            },
+            "topFiles": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SummaryFileCountEntry"
+              }
+            }
+          },
+          "required": [
+            "errorCount",
+            "warningCount",
+            "topRules",
+            "topFiles"
+          ],
+          "additionalProperties": false
+        },
+        "policy": {
+          "type": "object",
+          "properties": {
+            "topRuleFamilies": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SummaryFamilyCountEntry"
+              }
+            },
+            "topFiles": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SummaryFindingCountEntry"
+              }
+            }
+          },
+          "required": [
+            "topRuleFamilies",
+            "topFiles"
+          ],
+          "additionalProperties": false
+        },
+        "secrets": {
+          "type": "object",
+          "properties": {
+            "topRules": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SummaryCountEntry"
+              }
+            },
+            "topFiles": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SummaryFindingCountEntry"
+              }
+            },
+            "noisyRules": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "topRules",
+            "topFiles",
+            "noisyRules"
+          ],
+          "additionalProperties": false
+        },
+        "hotspots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SummaryHotspot"
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "run",
+        "size",
+        "complexity",
+        "duplication",
+        "changeRisk",
+        "dependencySecurity",
+        "architecture",
+        "deadCode",
+        "maintainability",
+        "policy",
+        "secrets",
+        "hotspots"
+      ],
+      "additionalProperties": false
+    },
+    "SummaryRunInfo": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "string"
+        },
+        "resultsDir": {
+          "type": "string"
+        },
+        "overallStatus": {
+          "$ref": "#/definitions/StepStatus"
+        },
+        "generatedAt": {
+          "type": "string"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SummaryRunStep"
+          }
+        }
+      },
+      "required": [
+        "target",
+        "resultsDir",
+        "overallStatus",
+        "generatedAt",
+        "steps"
+      ],
+      "additionalProperties": false
+    },
+    "StepStatus": {
+      "type": "string",
+      "enum": [
+        "passed",
+        "findings",
+        "failed",
+        "skipped",
+        "unsupported"
+      ]
+    },
+    "SummaryRunStep": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/StepStatus"
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "artifacts"
+      ],
+      "additionalProperties": false
+    },
+    "SummaryLanguageMetric": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "files": {
+          "type": "number"
+        },
+        "lines": {
+          "type": "number"
+        },
+        "codeLines": {
+          "type": "number"
+        },
+        "commentLines": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "files",
+        "lines",
+        "codeLines",
+        "commentLines"
+      ],
+      "additionalProperties": false
+    },
+    "SummaryComplexityHotspot": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "function": {
+          "type": "string"
+        },
+        "ccn": {
+          "type": "number"
+        },
+        "nloc": {
+          "type": "number"
+        },
+        "startLine": {
+          "type": "number"
+        },
+        "endLine": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "file",
+        "function",
+        "ccn",
+        "nloc",
+        "startLine",
+        "endLine"
+      ],
+      "additionalProperties": false
+    },
+    "SummaryDuplicationPair": {
+      "type": "object",
+      "properties": {
+        "leftFile": {
+          "type": "string"
+        },
+        "rightFile": {
+          "type": "string"
+        },
+        "lines": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "leftFile",
+        "rightFile",
+        "lines"
+      ],
+      "additionalProperties": false
+    },
+    "SummaryDuplicationFile": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "duplicatedLines": {
+          "type": "number"
+        },
+        "duplicatedPercentage": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "file",
+        "duplicatedLines",
+        "duplicatedPercentage"
+      ],
+      "additionalProperties": false
+    },
+    "SummaryRevisionsEntry": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "revisions": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "file",
+        "revisions"
+      ],
+      "additionalProperties": false
+    },
+    "SummaryOwnershipHotspot": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "ownership": {
+          "type": "number"
+        },
+        "revisions": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "file",
+        "owner",
+        "ownership",
+        "revisions"
+      ],
+      "additionalProperties": false
+    },
+    "SummaryAgeEntry": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "ageDays": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "file",
+        "ageDays"
+      ],
+      "additionalProperties": false
+    },
+    "SummaryCouplingEntry": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "coupledFile": {
+          "type": "string"
+        },
+        "degree": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "file",
+        "coupledFile",
+        "degree"
+      ],
+      "additionalProperties": false
+    },
+    "SummaryEffortEntry": {
+      "type": "object",
+      "properties": {
+        "author": {
+          "type": "string"
+        },
+        "added": {
+          "type": "number"
+        },
+        "deleted": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "author",
+        "added",
+        "deleted"
+      ],
+      "additionalProperties": false
+    },
+    "SummaryDependencyPackage": {
+      "type": "object",
+      "properties": {
+        "package": {
+          "type": "string"
+        },
+        "installedVersion": {
+          "type": "string"
+        },
+        "severity": {
+          "type": "string"
+        },
+        "advisoryCount": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "package",
+        "installedVersion",
+        "severity",
+        "advisoryCount"
+      ],
+      "additionalProperties": false
+    },
+    "SummaryCoverageAssessment": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "useful",
+            "partial",
+            "weak"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "SummaryCountEntry": {
+      "type": "object",
+      "properties": {
+        "ruleId": {
+          "type": "string"
+        },
+        "count": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "ruleId",
+        "count"
+      ],
+      "additionalProperties": false
+    },
+    "SummaryFileCountEntry": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "messageCount": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "file",
+        "messageCount"
+      ],
+      "additionalProperties": false
+    },
+    "SummaryFamilyCountEntry": {
+      "type": "object",
+      "properties": {
+        "ruleFamily": {
+          "type": "string"
+        },
+        "count": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "ruleFamily",
+        "count"
+      ],
+      "additionalProperties": false
+    },
+    "SummaryFindingCountEntry": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "findingCount": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "file",
+        "findingCount"
+      ],
+      "additionalProperties": false
+    },
+    "SummaryHotspot": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "score": {
+          "type": "number"
+        },
+        "signals": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "file",
+        "score",
+        "signals",
+        "notes"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
