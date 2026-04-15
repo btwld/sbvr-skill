@@ -1,4 +1,0 @@
-interface:
-  display_name: "Lizard CLI"
-  short_description: "Run Lizard CLI complexity analysis"
-  default_prompt: "Use $lizard to analyze code complexity in this repo and explain the main hotspots."
